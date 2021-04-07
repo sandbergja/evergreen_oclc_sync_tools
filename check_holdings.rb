@@ -23,7 +23,7 @@ class CheckHoldings < Thor
 
       next unless marc
 
-      matching_records = marc.find_all { |record| record['035']['a'].delete('^0-9') == oclc_number.strip }
+      matching_records = marc.find_all { |record| record['035'] && (record['035']['a'].delete('^0-9') == oclc_number.strip) }
       if matching_records.any?
         identifier = matching_records.first['001'].value
         status = conn.get_holdings identifier
