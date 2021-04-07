@@ -29,6 +29,8 @@ class CheckHoldings < Thor
   def deletes(path_to_oclc_number_file)
 
     File.readlines(path_to_oclc_number_file).each do |oclc_number|
+      next if normalize(oclc_number).empty?
+
       response = Nokogiri::XML(URI.parse(
         "#{ENV['EVERGREEN_URL']}/opac/extras/sru?operation=searchRetrieve&query=dc.identifier=#{normalize(oclc_number)}"
       ).open)
@@ -57,6 +59,7 @@ class CheckHoldings < Thor
 
     if path_to_eg_db_id_file
       File.readlines(path_to_eg_db_id_file).each do |eg_db_id|
+        next if normalize(eg_db_id).empty?
         next unless any_items_loanable?(eg_db_id)
 
         records = fetch_and_marcify("#{ENV['EVERGREEN_URL']}/opac/extras/supercat/retrieve/marcxml/record/#{eg_db_id}")
