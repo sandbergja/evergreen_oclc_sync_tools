@@ -2,6 +2,7 @@
 
 source 'https://rubygems.org'
 
+gem 'dotenv'
 gem 'evergreen_holdings'
 gem 'marc'
 gem 'nokogiri'
