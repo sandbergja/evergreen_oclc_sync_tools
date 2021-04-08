@@ -31,9 +31,13 @@ class CheckHoldings < Thor
     File.readlines(path_to_oclc_number_file).each do |oclc_number|
       next if normalize(oclc_number).empty?
 
-      response = Nokogiri::XML(URI.parse(
-        "#{ENV['EVERGREEN_URL']}/opac/extras/sru?operation=searchRetrieve&query=dc.identifier=#{normalize(oclc_number)}"
-      ).open)
+      begin
+        response = Nokogiri::XML(URI.parse(
+          "#{ENV['EVERGREEN_URL']}/opac/extras/sru?operation=searchRetrieve&query=dc.identifier=#{normalize(oclc_number)}"
+        ).open)
+      rescue Errno::ECONNRESET, Errno::ETIMEDOUT
+        next
+      end
       records = response.xpath('//marc:record', 'marc' => 'http://www.loc.gov/MARC21/slim')
       marc = MARC::XMLReader.new(StringIO.new(records.to_s))
 
