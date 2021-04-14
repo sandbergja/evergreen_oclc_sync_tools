@@ -66,7 +66,7 @@ class CheckHoldings < Thor
         next if normalize(eg_db_id).empty?
         next unless any_items_loanable?(eg_db_id)
 
-        records = fetch_and_marcify("#{ENV['EVERGREEN_URL']}/opac/extras/supercat/retrieve/marcxml/record/#{eg_db_id}")
+        records = fetch_and_marcify("#{ENV['EVERGREEN_URL']}/opac/extras/supercat/retrieve/marcxml/record/#{normalize(eg_db_id)}")
         puts extract_oclc_number_from_marc records.first
         sleep 1
       end
